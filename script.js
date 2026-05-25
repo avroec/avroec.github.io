@@ -368,6 +368,21 @@ function initCommand() {
   });
 }
 
+/* ---- Slider (range fill) ---- */
+function initSlider() {
+  document.querySelectorAll('.slider[type="range"]').forEach(slider => {
+    function updateFill() {
+      const min = parseFloat(slider.min) || 0;
+      const max = parseFloat(slider.max) || 100;
+      const val = parseFloat(slider.value) || 0;
+      const pct = ((val - min) / (max - min)) * 100;
+      slider.style.setProperty('--slider-fill', pct + '%');
+    }
+    updateFill();
+    slider.addEventListener('input', updateFill);
+  });
+}
+
 /* ---- Carousel ---- */
 function initCarousel() {
   document.querySelectorAll('.carousel').forEach(car => {
@@ -715,6 +730,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initToastTriggers();
   initCalendar();
   initCommand();
+  initSlider();
   initCarousel();
   initAlertDialog();
   initDropdownMenu();
