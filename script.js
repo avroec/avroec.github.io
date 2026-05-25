@@ -745,9 +745,9 @@ function initMenubar() {
   });
 }
 
-/* ---- ScrollSpy for demo sidebar ---- */
+/* ---- ScrollSpy for sidebar ---- */
 function initScrollSpy() {
-  const links = document.querySelectorAll('.demo-sidebar a[href^="#"]');
+  const links = document.querySelectorAll('.demo-sidebar a[href^="#"], .cv-sidebar a[href^="#"]');
   if (!links.length) return;
 
   const sections = Array.from(links).map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
@@ -756,7 +756,7 @@ function initScrollSpy() {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         links.forEach(link => link.classList.remove('active'));
-        const active = document.querySelector(`.demo-sidebar a[href="#${entry.target.id}"]`);
+        const active = document.querySelector(`.demo-sidebar a[href="#${entry.target.id}"], .cv-sidebar a[href="#${entry.target.id}"]`);
         if (active) active.classList.add('active');
       }
     });

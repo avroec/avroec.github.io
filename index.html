@@ -3,143 +3,416 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="CV / Portfolio">
-    <title>CV / Portfolio</title>
+    <meta name="description" content="CV / Portfolio — Developer & Designer">
+    <title>Alex Vargas — CV / Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Layout */
-        .demo-header {
+        /* ===== Layout ===== */
+        .cv-header {
             position: sticky; top: 0; z-index: 45;
             background: var(--background);
             border-bottom: 1px solid var(--border);
             padding: 0.75rem 1.5rem;
             display: flex; align-items: center; justify-content: space-between;
         }
-        .demo-header h1 { font-size: 1.125rem; font-weight: 700; }
-        .demo-header-actions { display: flex; align-items: center; gap: 0.75rem; }
-        .demo-sidebar {
-            position: fixed; top: 55px; left: 0; bottom: 0;
-            width: 260px;
+        .cv-header-name { font-size: 1rem; font-weight: 700; }
+        .cv-header-actions { display: flex; align-items: center; gap: 0.75rem; }
+
+        .cv-sidebar {
+            position: fixed; top: 53px; left: 0; bottom: 0;
+            width: 220px;
             border-right: 1px solid var(--border);
             background: var(--background);
-            padding: 1.5rem;
+            padding: 1.5rem 1rem;
             overflow-y: auto;
             z-index: 40;
         }
-        .demo-sidebar h2 { font-size: 0.8rem; font-weight: 600; color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; margin-top: 1rem; }
-        .demo-sidebar h2:first-child { margin-top: 0; }
-        .demo-sidebar a {
+        .cv-sidebar h3 { font-size: 0.7rem; font-weight: 600; color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+        .cv-sidebar a {
             display: block;
             padding: 0.375rem 0.75rem;
             border-radius: var(--radius);
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: var(--muted-foreground);
             transition: all 150ms;
             border-left: 2px solid transparent;
         }
-        .demo-sidebar a:hover { background: var(--accent); color: var(--accent-foreground); }
-        .demo-sidebar a.active { background: var(--accent); color: var(--foreground); border-left-color: var(--primary); font-weight: 500; }
-        .demo-sidebar .sidebar-divider { border-top: 1px solid var(--border); margin: 1rem 0 0.5rem; }
-        .demo-main { margin-left: 260px; margin-top: 55px; }
+        .cv-sidebar a:hover { background: var(--accent); color: var(--accent-foreground); }
+        .cv-sidebar a.active { background: var(--accent); color: var(--foreground); border-left-color: var(--primary); font-weight: 500; }
 
-        /* CV / Portfolio */
-        .cv-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 4rem 2.5rem;
-        }
-        .cv-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 60vh;
-            text-align: center;
-            color: var(--muted-foreground);
-        }
-        .cv-placeholder-icon { font-size: 4rem; margin-bottom: 1.5rem; opacity: 0.6; }
-        .cv-placeholder h2 { font-size: 1.5rem; font-weight: 700; color: var(--foreground); margin-bottom: 0.5rem; }
-        .cv-placeholder p { font-size: 0.9375rem; line-height: 1.6; max-width: 480px; }
+        .cv-main { margin-left: 220px; margin-top: 53px; }
 
+        /* ===== Hero ===== */
+        .cv-hero {
+            padding: 5rem 3rem 3rem;
+            display: flex; align-items: center; gap: 3rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .cv-hero-left { flex-shrink: 0; }
+        .cv-hero-right { flex: 1; }
+        .cv-hero-name { font-size: 2rem; font-weight: 700; margin-bottom: 0.25rem; letter-spacing: -0.02em; }
+        .cv-hero-role { font-size: 1.1rem; color: var(--muted-foreground); margin-bottom: 1rem; }
+        .cv-hero-location { font-size: 0.85rem; color: var(--muted-foreground); display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .cv-hero-links { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+        /* ===== Section ===== */
+        .cv-section {
+            padding: 3rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .cv-section:last-child { border-bottom: none; }
+        .cv-section-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem; }
+        .cv-section-icon { font-size: 1.25rem; }
+        .cv-section-title { font-size: 1.25rem; font-weight: 700; }
+
+        /* ===== About ===== */
+        .cv-about-text { font-size: 0.95rem; line-height: 1.75; color: var(--muted-foreground); max-width: 640px; }
+
+        /* ===== Experience Timeline ===== */
+        .cv-timeline { display: flex; flex-direction: column; gap: 1.5rem; }
+        .cv-timeline-item {
+            display: flex; gap: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--card);
+            transition: background 150ms, border-color 150ms;
+        }
+        .cv-timeline-item:hover { border-color: var(--ring); }
+        .cv-timeline-date {
+            flex-shrink: 0; width: 120px;
+            font-size: 0.75rem; color: var(--muted-foreground);
+            padding-top: 0.125rem;
+        }
+        .cv-timeline-body { flex: 1; }
+        .cv-timeline-role { font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .cv-timeline-company { font-size: 0.85rem; color: var(--primary); margin-bottom: 0.75rem; }
+        .cv-timeline-desc { font-size: 0.85rem; color: var(--muted-foreground); line-height: 1.6; }
+        .cv-timeline-tags { display: flex; flex-wrap: wrap; gap: 0.375rem; margin-top: 0.75rem; }
+
+        /* ===== Skills ===== */
+        .cv-skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem; }
+        .cv-skill-group { display: flex; flex-direction: column; gap: 0.75rem; }
+        .cv-skill-label { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 500; }
+        .cv-skill-pct { color: var(--muted-foreground); }
+
+        /* ===== Projects ===== */
+        .cv-projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+        .cv-project-card {
+            display: flex; flex-direction: column;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: border-color 150ms, box-shadow 150ms;
+        }
+        .cv-project-card:hover { border-color: var(--ring); box-shadow: var(--shadow-md); }
+        .cv-project-body { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+        .cv-project-name { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .cv-project-desc { font-size: 0.825rem; color: var(--muted-foreground); line-height: 1.55; flex: 1; margin-bottom: 0.75rem; }
+        .cv-project-footer { display: flex; justify-content: space-between; align-items: center; }
+
+        /* ===== Contact ===== */
+        .cv-contact-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+        .cv-contact-item { display: flex; align-items: center; gap: 0.75rem; padding: 1rem; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.85rem; transition: border-color 150ms; }
+        .cv-contact-item:hover { border-color: var(--ring); }
+        .cv-contact-icon { font-size: 1.25rem; }
+
+        /* ===== Footer ===== */
+        .cv-footer { padding: 2rem 3rem; text-align: center; font-size: 0.75rem; color: var(--muted-foreground); }
+
+        /* ===== Responsive ===== */
         @media (max-width: 768px) {
-            .demo-sidebar { display: none; }
-            .demo-main { margin-left: 0; }
-            .cv-container { padding: 2rem 1rem; }
+            .cv-sidebar { display: none; }
+            .cv-main { margin-left: 0; }
+            .cv-hero { flex-direction: column; padding: 3rem 1.5rem 2rem; gap: 1.5rem; text-align: center; }
+            .cv-hero-links { justify-content: center; }
+            .cv-section { padding: 2rem 1.5rem; }
+            .cv-timeline-item { flex-direction: column; gap: 0.5rem; }
+            .cv-timeline-date { width: auto; }
+            .cv-projects-grid { grid-template-columns: 1fr; }
+            .cv-skills-grid { grid-template-columns: 1fr; }
+            .cv-contact-grid { grid-template-columns: 1fr; }
+            .cv-footer { padding: 1.5rem; }
         }
     </style>
 </head>
 <body>
 
-<!-- ======= HEADER ======= -->
-<header class="demo-header">
-    <h1>CV / Portfolio</h1>
-    <div class="demo-header-actions">
+<!-- ===== HEADER ===== -->
+<header class="cv-header">
+    <span class="cv-header-name">Alex Vargas</span>
+    <div class="cv-header-actions">
         <button class="btn btn-outline btn-sm" id="themeToggle" aria-label="Toggle theme">🌙</button>
-        <a href="components.html" class="btn btn-ghost btn-sm">Components ↗</a>
     </div>
 </header>
 
-<!-- ======= SIDEBAR ======= -->
-<aside class="demo-sidebar">
-    <h2>Navigation</h2>
-    <a href="#" class="active">Home / CV</a>
-    <a href="components.html">All Components</a>
-
-    <div class="sidebar-divider"></div>
-    <h2>Components</h2>
-    <a href="components.html#button">Button</a>
-    <a href="components.html#input">Input / Label / Textarea</a>
-    <a href="components.html#checkbox-check">Checkbox / Radio / Switch</a>
-    <a href="components.html#combobox">Combobox</a>
-    <a href="components.html#select">Select</a>
-    <a href="components.html#slider">Slider</a>
-    <a href="components.html#badge">Badge</a>
-    <a href="components.html#card">Card</a>
-    <a href="components.html#table">Table</a>
-    <a href="components.html#alert">Alert</a>
-    <a href="components.html#accordion">Accordion</a>
-    <a href="components.html#collapsible">Collapsible</a>
-    <a href="components.html#tabs">Tabs</a>
-    <a href="components.html#toggle">Toggle</a>
-    <a href="components.html#breadcrumb">Breadcrumb</a>
-    <a href="components.html#pagination">Pagination</a>
-    <a href="components.html#separator">Separator</a>
-    <a href="components.html#avatar">Avatar</a>
-    <a href="components.html#progress">Progress</a>
-    <a href="components.html#skeleton">Skeleton</a>
-    <a href="components.html#spinner">Spinner</a>
-    <a href="components.html#kbd">Kbd</a>
-    <a href="components.html#aspect">Aspect Ratio</a>
-    <a href="components.html#dialog">Dialog</a>
-    <a href="components.html#alertdialog">Alert Dialog</a>
-    <a href="components.html#sheet">Sheet / Drawer</a>
-    <a href="components.html#tooltip">Tooltip</a>
-    <a href="components.html#popover">Popover</a>
-    <a href="components.html#hovercard">Hover Card</a>
-    <a href="components.html#dropdown">Dropdown Menu</a>
-    <a href="components.html#contextmenu">Context Menu</a>
-    <a href="components.html#menubar">Menubar</a>
-    <a href="components.html#navmenu">Navigation Menu</a>
-    <a href="components.html#calendar">Calendar</a>
-    <a href="components.html#command">Command Palette</a>
-    <a href="components.html#carousel">Carousel</a>
-    <a href="components.html#toast-demo">Toast</a>
-    <a href="components.html#empty-state">Empty State</a>
-    <a href="components.html#form-demo">Form</a>
+<!-- ===== SIDEBAR ===== -->
+<aside class="cv-sidebar">
+    <h3>Navigation</h3>
+    <a href="#hero" class="active">Home</a>
+    <a href="#about">About</a>
+    <a href="#experience">Experience</a>
+    <a href="#skills">Skills</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
 </aside>
 
-<!-- ======= MAIN CONTENT ======= -->
-<main class="demo-main">
-    <div class="cv-container">
-        <div class="cv-placeholder">
-            <div class="cv-placeholder-icon">👤</div>
-            <h2>Tu CV / Portfolio aquí</h2>
-            <p>Edita este archivo <code style="background:var(--accent);padding:0.125rem 0.375rem;font-size:0.8rem;">index.html</code> para añadir tu información personal, experiencia, proyectos y habilidades. Los estilos y temas ya están configurados.</p>
+<!-- ===== MAIN ===== -->
+<main class="cv-main">
+
+    <!-- ===== HERO ===== -->
+    <section class="cv-hero" id="hero">
+        <div class="cv-hero-left">
+            <div class="avatar avatar-lg" style="width:7rem;height:7rem;font-size:2rem;">AV</div>
         </div>
-    </div>
+        <div class="cv-hero-right">
+            <h1 class="cv-hero-name">Alex Vargas</h1>
+            <p class="cv-hero-role">Full-Stack Developer &amp; UI Designer</p>
+            <p class="cv-hero-location">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"/></svg>
+                Barcelona, Spain &middot; Remote
+            </p>
+            <div class="cv-hero-links">
+                <a href="#" class="btn btn-outline btn-sm">GitHub</a>
+                <a href="#" class="btn btn-outline btn-sm">LinkedIn</a>
+                <a href="#" class="btn btn-outline btn-sm">Email</a>
+                <a href="#" class="btn btn-sm">Download CV</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ABOUT ===== -->
+    <section class="cv-section" id="about">
+        <div class="cv-section-header">
+            <span class="cv-section-icon">👋</span>
+            <h2 class="cv-section-title">About</h2>
+        </div>
+        <p class="cv-about-text">
+            I'm a full-stack developer with 6+ years of experience building performant web applications and design systems. 
+            I specialize in crafting accessible, pixel-perfect UIs with modern frameworks and shipping robust backends that scale. 
+            Currently focused on TypeScript, React, and Node.js ecosystems — with a growing interest in Rust and systems programming.
+        </p>
+    </section>
+
+    <!-- ===== EXPERIENCE ===== -->
+    <section class="cv-section" id="experience">
+        <div class="cv-section-header">
+            <span class="cv-section-icon">💼</span>
+            <h2 class="cv-section-title">Experience</h2>
+        </div>
+        <div class="cv-timeline">
+
+            <div class="cv-timeline-item">
+                <div class="cv-timeline-date">2022 — Present</div>
+                <div class="cv-timeline-body">
+                    <div class="cv-timeline-role">Senior Frontend Engineer</div>
+                    <div class="cv-timeline-company">TechCorp Inc.</div>
+                    <p class="cv-timeline-desc">
+                        Led the design system migration from styled-components to CSS Modules + design tokens. 
+                        Reduced bundle size by 42% and improved Lighthouse scores from 62 to 96. 
+                        Mentored a team of 4 junior developers and established code review standards.
+                    </p>
+                    <div class="cv-timeline-tags">
+                        <span class="badge badge-outline">React</span>
+                        <span class="badge badge-outline">TypeScript</span>
+                        <span class="badge badge-outline">Design Systems</span>
+                        <span class="badge badge-outline">Next.js</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cv-timeline-item">
+                <div class="cv-timeline-date">2020 — 2022</div>
+                <div class="cv-timeline-body">
+                    <div class="cv-timeline-role">Full-Stack Developer</div>
+                    <div class="cv-timeline-company">StartupXYZ</div>
+                    <p class="cv-timeline-desc">
+                        Built and shipped the core SaaS product from zero to 10k+ users. 
+                        Designed REST APIs, implemented real-time collaboration with WebSockets, 
+                        and created a component library used across 3 product teams.
+                    </p>
+                    <div class="cv-timeline-tags">
+                        <span class="badge badge-outline">Node.js</span>
+                        <span class="badge badge-outline">PostgreSQL</span>
+                        <span class="badge badge-outline">Vue.js</span>
+                        <span class="badge badge-outline">AWS</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cv-timeline-item">
+                <div class="cv-timeline-date">2018 — 2020</div>
+                <div class="cv-timeline-body">
+                    <div class="cv-timeline-role">UI Developer</div>
+                    <div class="cv-timeline-company">Digital Agency Co.</div>
+                    <p class="cv-timeline-desc">
+                        Delivered 15+ client projects ranging from e-commerce platforms to interactive dashboards. 
+                        Introduced automated accessibility testing and reduced client-reported UI bugs by 60%.
+                    </p>
+                    <div class="cv-timeline-tags">
+                        <span class="badge badge-outline">JavaScript</span>
+                        <span class="badge badge-outline">Sass</span>
+                        <span class="badge badge-outline">Figma</span>
+                        <span class="badge badge-outline">a11y</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ===== SKILLS ===== -->
+    <section class="cv-section" id="skills">
+        <div class="cv-section-header">
+            <span class="cv-section-icon">🛠</span>
+            <h2 class="cv-section-title">Skills</h2>
+        </div>
+        <div class="cv-skills-grid">
+
+            <div class="cv-skill-group">
+                <div class="cv-skill-label"><span>TypeScript / JavaScript</span><span class="cv-skill-pct">95%</span></div>
+                <div class="progress"><div class="progress-bar" style="width:95%;" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100"></div></div>
+            </div>
+            <div class="cv-skill-group">
+                <div class="cv-skill-label"><span>React / Next.js</span><span class="cv-skill-pct">90%</span></div>
+                <div class="progress"><div class="progress-bar" style="width:90%;" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div></div>
+            </div>
+            <div class="cv-skill-group">
+                <div class="cv-skill-label"><span>Node.js / Express</span><span class="cv-skill-pct">85%</span></div>
+                <div class="progress"><div class="progress-bar" style="width:85%;" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div></div>
+            </div>
+            <div class="cv-skill-group">
+                <div class="cv-skill-label"><span>CSS / Design Systems</span><span class="cv-skill-pct">92%</span></div>
+                <div class="progress"><div class="progress-bar" style="width:92%;" role="progressbar" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100"></div></div>
+            </div>
+            <div class="cv-skill-group">
+                <div class="cv-skill-label"><span>PostgreSQL / MongoDB</span><span class="cv-skill-pct">80%</span></div>
+                <div class="progress"><div class="progress-bar" style="width:80%;" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div></div>
+            </div>
+            <div class="cv-skill-group">
+                <div class="cv-skill-label"><span>Rust (learning)</span><span class="cv-skill-pct">45%</span></div>
+                <div class="progress"><div class="progress-bar" style="width:45%;" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div></div>
+            </div>
+
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:1.5rem;">
+            <span class="badge badge-outline">Git</span>
+            <span class="badge badge-outline">Docker</span>
+            <span class="badge badge-outline">CI/CD</span>
+            <span class="badge badge-outline">GraphQL</span>
+            <span class="badge badge-outline">REST</span>
+            <span class="badge badge-outline">WebSockets</span>
+            <span class="badge badge-outline">Figma</span>
+            <span class="badge badge-outline">Storybook</span>
+            <span class="badge badge-outline">Jest</span>
+            <span class="badge badge-outline">Playwright</span>
+            <span class="badge badge-outline">Linux</span>
+            <span class="badge badge-outline">Vim</span>
+        </div>
+    </section>
+
+    <!-- ===== PROJECTS ===== -->
+    <section class="cv-section" id="projects">
+        <div class="cv-section-header">
+            <span class="cv-section-icon">🚀</span>
+            <h2 class="cv-section-title">Projects</h2>
+        </div>
+        <div class="cv-projects-grid">
+
+            <div class="cv-project-card">
+                <div class="cv-project-body">
+                    <div class="cv-project-name">Design System CLI</div>
+                    <p class="cv-project-desc">
+                        A CLI tool that generates React component libraries from Figma tokens. 
+                        Supports multiple output formats and automatic Storybook integration.
+                    </p>
+                    <div class="cv-project-footer">
+                        <span class="badge badge-outline">TypeScript</span>
+                        <a href="#" class="btn btn-ghost btn-sm">View →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cv-project-card">
+                <div class="cv-project-body">
+                    <div class="cv-project-name">Real-time Collab Editor</div>
+                    <p class="cv-project-desc">
+                        Google Docs-style collaborative text editor using CRDTs and WebSockets. 
+                        Handles 50+ concurrent users with sub-100ms latency.
+                    </p>
+                    <div class="cv-project-footer">
+                        <span class="badge badge-outline">Rust</span>
+                        <a href="#" class="btn btn-ghost btn-sm">View →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cv-project-card">
+                <div class="cv-project-body">
+                    <div class="cv-project-name">Accessibility Audit Tool</div>
+                    <p class="cv-project-desc">
+                        Automated a11y testing suite that integrates with CI pipelines. 
+                        Scored 100/100 on WCAG 2.1 AA compliance for client projects.
+                    </p>
+                    <div class="cv-project-footer">
+                        <span class="badge badge-outline">Playwright</span>
+                        <a href="#" class="btn btn-ghost btn-sm">View →</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cv-project-card">
+                <div class="cv-project-body">
+                    <div class="cv-project-name">Personal Site &amp; Blog</div>
+                    <p class="cv-project-desc">
+                        This very site. Built with pure HTML/CSS/JS, no framework, no build step. 
+                        Brutalist-themed with 4 color modes and zero dependencies.
+                    </p>
+                    <div class="cv-project-footer">
+                        <span class="badge badge-outline">HTML/CSS</span>
+                        <a href="#" class="btn btn-ghost btn-sm">Source →</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ===== CONTACT ===== -->
+    <section class="cv-section" id="contact">
+        <div class="cv-section-header">
+            <span class="cv-section-icon">📬</span>
+            <h2 class="cv-section-title">Contact</h2>
+        </div>
+        <div class="cv-contact-grid">
+            <a href="mailto:hello@alexvargas.dev" class="cv-contact-item">
+                <span class="cv-contact-icon">✉️</span>
+                <span>hello@alexvargas.dev</span>
+            </a>
+            <a href="#" class="cv-contact-item">
+                <span class="cv-contact-icon">🐙</span>
+                <span>github.com/avroec</span>
+            </a>
+            <a href="#" class="cv-contact-item">
+                <span class="cv-contact-icon">💼</span>
+                <span>linkedin.com/in/alexvargas</span>
+            </a>
+            <a href="#" class="cv-contact-item">
+                <span class="cv-contact-icon">🐦</span>
+                <span>@alexvargas</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="cv-footer">
+        <span>© 2026 Alex Vargas — Built with pure HTML/CSS/JS</span>
+    </footer>
+
 </main>
 
 <script src="script.js"></script>
