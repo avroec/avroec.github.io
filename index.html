@@ -115,6 +115,7 @@
     <a href="#button">Button</a>
     <a href="#input">Input / Label / Textarea</a>
     <a href="#checkbox-check">Checkbox / Radio / Switch</a>
+    <a href="#combobox">Combobox</a>
     <a href="#select">Select</a>
     <a href="#slider">Slider</a>
     <a href="#badge">Badge</a>
@@ -261,6 +262,35 @@
         <label style="display:flex;align-items:center;gap:0.75rem;font-size:.875rem;">
             <input class="switch" type="checkbox" role="switch" disabled aria-label="Disabled"> Disabled
         </label>
+    </div>
+</section>
+
+<!-- ========== COMBOBOX ========== -->
+<section class="demo-section" id="combobox">
+    <h2 class="demo-section-title">Combobox</h2>
+    <p class="demo-section-desc">An input with a dropdown of selectable options — type to filter and select with keyboard or mouse.</p>
+
+    <div style="max-width:340px;">
+        <label class="label" for="combobox-demo">Framework</label>
+        <div class="combobox" data-combobox>
+            <div class="combobox-trigger">
+                <input class="combobox-input" id="combobox-demo" type="text" placeholder="Search framework…" autocomplete="off" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-autocomplete="list">
+                <button class="combobox-chevron" tabindex="-1" aria-label="Toggle options">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+            </div>
+            <div class="combobox-menu" role="listbox">
+                <div class="combobox-option" role="option" aria-selected="false" data-value="react">React</div>
+                <div class="combobox-option" role="option" aria-selected="false" data-value="vue">Vue</div>
+                <div class="combobox-option" role="option" aria-selected="false" data-value="svelte">Svelte</div>
+                <div class="combobox-option" role="option" aria-selected="false" data-value="angular">Angular</div>
+                <div class="combobox-option" role="option" aria-selected="false" data-value="next">Next.js</div>
+                <div class="combobox-option" role="option" aria-selected="false" data-value="nuxt">Nuxt</div>
+                <div class="combobox-option" role="option" aria-selected="false" data-value="remix">Remix</div>
+                <div class="combobox-option" role="option" aria-selected="false" data-value="astro">Astro</div>
+                <div class="combobox-empty" style="display:none;">No framework found.</div>
+            </div>
+        </div>
     </div>
 </section>
 

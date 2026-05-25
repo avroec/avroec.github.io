@@ -7,6 +7,39 @@ function cn(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
+/* ---- Utility: close all open overlays of given selectors ---- */
+function closeAll(selectors) {
+  selectors.forEach(sel => {
+    document.querySelectorAll(sel).forEach(el => el.classList.remove('open'));
+  });
+}
+
+/* ---- Utility: keyboard navigation for list-like menus ---- */
+function keyboardNav(e, visibleItems, highlightedIdx, onEnter) {
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    const next = Math.min(highlightedIdx + 1, visibleItems.length - 1);
+    updateItemsHighlight(visibleItems, next);
+    return next;
+  }
+  if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    const prev = Math.max(highlightedIdx - 1, 0);
+    updateItemsHighlight(visibleItems, prev);
+    return prev;
+  }
+  if (e.key === 'Enter' && highlightedIdx >= 0 && visibleItems[highlightedIdx]) {
+    e.preventDefault();
+    if (onEnter) onEnter(visibleItems[highlightedIdx]);
+    else visibleItems[highlightedIdx].click();
+  }
+  return highlightedIdx;
+}
+
+function updateItemsHighlight(items, activeIdx) {
+  items.forEach((item, i) => item.classList.toggle('highlighted', i === activeIdx));
+}
+
 /* ---- Dark Mode ---- */
 function initTheme() {
   const btn = document.getElementById('themeToggle');
@@ -146,16 +179,15 @@ function initPopover() {
     trigger.addEventListener('click', (e) => {
       e.stopPropagation();
       const isOpen = content.classList.contains('show');
-      // Close all other popovers
-      document.querySelectorAll('.popover-content.show').forEach(c => c.classList.remove('show'));
+      closeAll(['.popover-content.show']);
       if (!isOpen) content.classList.add('show');
     });
   });
 
   document.addEventListener('click', (e) => {
-    document.querySelectorAll('.popover-content.show').forEach(content => {
-      if (!content.contains(e.target)) content.classList.remove('show');
-    });
+    if (!e.target.closest('.popover-trigger')) {
+      closeAll(['.popover-content.show']);
+    }
   });
 }
 
@@ -184,7 +216,8 @@ function initCustomSelect() {
     trigger.addEventListener('click', (e) => {
       e.stopPropagation();
       const isOpen = sel.classList.contains('open');
-      document.querySelectorAll('.custom-select.open').forEach(s => s.classList.remove('open'));
+      closeAll(['.custom-select.open']);
+      document.querySelectorAll('.custom-select-trigger').forEach(t => t.setAttribute('aria-expanded', 'false'));
       sel.classList.toggle('open', !isOpen);
       trigger.setAttribute('aria-expanded', String(!isOpen));
     });
@@ -201,11 +234,8 @@ function initCustomSelect() {
   });
 
   document.addEventListener('click', () => {
-    document.querySelectorAll('.custom-select.open').forEach(s => {
-      s.classList.remove('open');
-      const t = s.querySelector('.custom-select-trigger');
-      if (t) t.setAttribute('aria-expanded', 'false');
-    });
+    closeAll(['.custom-select.open']);
+    document.querySelectorAll('.custom-select-trigger').forEach(t => t.setAttribute('aria-expanded', 'false'));
   });
 }
 
@@ -360,10 +390,80 @@ function initCommand() {
     let idx = -1;
     input.addEventListener('keydown', e => {
       const visible = Array.from(items).filter(i => i.style.display !== 'none');
-      if (e.key === 'ArrowDown') { e.preventDefault(); idx = Math.min(idx + 1, visible.length - 1); }
-      if (e.key === 'ArrowUp') { e.preventDefault(); idx = Math.max(idx - 1, 0); }
-      if (e.key === 'Enter' && visible[idx]) { visible[idx].click(); }
-      visible.forEach((v, i) => v.classList.toggle('selected', i === idx));
+      idx = keyboardNav(e, visible, idx);
+    });
+  });
+}
+
+/* ---- Combobox ---- */
+function initCombobox() {
+  document.querySelectorAll('.combobox[data-combobox]').forEach(cb => {
+    const input = cb.querySelector('.combobox-input');
+    const menu = cb.querySelector('.combobox-menu');
+    const options = Array.from(menu.querySelectorAll('.combobox-option'));
+    const empty = menu.querySelector('.combobox-empty');
+    const chevron = cb.querySelector('.combobox-chevron');
+    let highlightedIdx = -1;
+
+    function open() {
+      closeAll(['.combobox.open', '.dropdown-menu.open', '.custom-select.open', '.popover-content.show']);
+      document.querySelectorAll('.dropdown-menu-trigger').forEach(t => t.setAttribute('aria-expanded', 'false'));
+      cb.classList.add('open');
+      input.setAttribute('aria-expanded', 'true');
+      filter(input.value);
+    }
+
+    function close() {
+      cb.classList.remove('open');
+      input.setAttribute('aria-expanded', 'false');
+      highlightedIdx = -1;
+    }
+
+    function filter(query) {
+      query = query.toLowerCase();
+      let hasVisible = false;
+      options.forEach(opt => {
+        const match = opt.textContent.toLowerCase().includes(query);
+        opt.style.display = match ? 'flex' : 'none';
+        if (match) hasVisible = true;
+      });
+      if (empty) empty.style.display = hasVisible ? 'none' : 'block';
+      highlightedIdx = -1;
+      updateItemsHighlight(options.filter(o => o.style.display !== 'none'), highlightedIdx);
+    }
+
+    function select(option) {
+      input.value = option.textContent.trim();
+      options.forEach(o => o.setAttribute('aria-selected', 'false'));
+      option.setAttribute('aria-selected', 'true');
+      close();
+    }
+
+    input.addEventListener('focus', () => { if (!cb.classList.contains('open')) open(); });
+    input.addEventListener('input', () => { if (!cb.classList.contains('open')) open(); else filter(input.value); });
+
+    chevron?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      cb.classList.contains('open') ? close() : open();
+    });
+
+    options.forEach(opt => {
+      opt.addEventListener('click', () => select(opt));
+    });
+
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { e.preventDefault(); close(); return; }
+      if (!cb.classList.contains('open') && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+        e.preventDefault();
+        open();
+        return;
+      }
+      const visible = options.filter(o => o.style.display !== 'none');
+      highlightedIdx = keyboardNav(e, visible, highlightedIdx, select);
+    });
+
+    document.addEventListener('click', e => {
+      if (!cb.contains(e.target)) close();
     });
   });
 }
@@ -474,11 +574,13 @@ function initDropdownMenu() {
     }
 
     function open() {
-      closeAllDropdowns();
+      closeAll(['.dropdown-menu.open', '.combobox.open', '.popover-content.show']);
+      document.querySelectorAll('.dropdown-menu-trigger').forEach(t => t.setAttribute('aria-expanded', 'false'));
       menu.classList.add('open');
       trigger.setAttribute('aria-expanded', 'true');
       highlightedIdx = -1;
-      updateHighlight();
+      const visible = getVisibleItems();
+      updateItemsHighlight(visible, highlightedIdx);
     }
 
     function close() {
@@ -488,25 +590,9 @@ function initDropdownMenu() {
       highlightedIdx = -1;
     }
 
-    function closeAllDropdowns() {
-      document.querySelectorAll('.dropdown-menu.open').forEach(m => {
-        m.classList.remove('open');
-        const t = m.querySelector('.dropdown-menu-trigger');
-        if (t) t.setAttribute('aria-expanded', 'false');
-        m.querySelectorAll('.dropdown-menu-sub.open-sub').forEach(s => s.classList.remove('open-sub'));
-      });
-    }
-
     function getVisibleItems() {
       return Array.from(content.querySelectorAll('.dropdown-menu-item, .dropdown-menu-sub-trigger'))
         .filter(el => el.offsetParent !== null && !el.closest('.dropdown-menu-sub-content'));
-    }
-
-    function updateHighlight(candidates = getVisibleItems()) {
-      menu.querySelectorAll('.highlighted').forEach(el => el.classList.remove('highlighted'));
-      if (candidates[highlightedIdx]) {
-        candidates[highlightedIdx].classList.add('highlighted');
-      }
     }
 
     trigger.addEventListener('click', e => {
@@ -523,28 +609,21 @@ function initDropdownMenu() {
       const candidates = Array.from(scope.querySelectorAll(':scope > .dropdown-menu-item, :scope > .dropdown-menu-sub-trigger'))
         .filter(el => el.offsetParent !== null);
 
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        highlightedIdx = Math.min(highlightedIdx + 1, candidates.length - 1);
-        updateHighlight(candidates);
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        highlightedIdx = Math.max(highlightedIdx - 1, 0);
-        updateHighlight(candidates);
-      } else if (e.key === 'ArrowRight' && e.target.classList.contains('dropdown-menu-sub-trigger')) {
+      if (e.key === 'ArrowRight' && e.target.classList.contains('dropdown-menu-sub-trigger')) {
         e.preventDefault();
         e.target.closest('.dropdown-menu-sub')?.classList.add('open-sub');
-      } else if (e.key === 'ArrowLeft') {
+        return;
+      }
+      if (e.key === 'ArrowLeft') {
         const subEl = e.target.closest('.dropdown-menu-sub');
         if (subEl) {
           e.preventDefault();
           subEl.classList.remove('open-sub');
           subEl.querySelector('.dropdown-menu-sub-trigger')?.focus();
         }
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        candidates[highlightedIdx]?.click();
+        return;
       }
+      highlightedIdx = keyboardNav(e, candidates, highlightedIdx);
     });
 
     // Item clicks
@@ -581,13 +660,11 @@ function initContextMenu() {
     let highlightedIdx = -1;
     const items = menu.querySelectorAll('.context-menu-item');
 
-    function updateHighlight() {
-      items.forEach((el, i) => el.classList.toggle('highlighted', i === highlightedIdx));
-    }
-
     function show(e) {
       e.preventDefault();
-      closeAll();
+      closeAll(['.context-menu.open']);
+      document.querySelectorAll('.context-menu.open').forEach(m => m.style.display = 'none');
+      activeContextMenu = null;
 
       let x = e.clientX, y = e.clientY;
       menu.style.display = 'block';
@@ -603,7 +680,7 @@ function initContextMenu() {
       menu.style.top = y + 'px';
       menu.classList.add('open');
       highlightedIdx = -1;
-      updateHighlight();
+      updateItemsHighlight(Array.from(items), highlightedIdx);
       activeContextMenu = menu;
 
       menu.addEventListener('click', hide, { once: true });
@@ -616,21 +693,11 @@ function initContextMenu() {
       activeContextMenu = null;
     }
 
-    function closeAll() {
-      document.querySelectorAll('.context-menu.open').forEach(m => {
-        m.classList.remove('open');
-        m.style.display = 'none';
-      });
-      activeContextMenu = null;
-    }
-
     target.addEventListener('contextmenu', show);
 
     menu.addEventListener('keydown', e => {
       if (e.key === 'Escape') { e.preventDefault(); hide(); target.focus(); return; }
-      if (e.key === 'ArrowDown') { e.preventDefault(); highlightedIdx = Math.min(highlightedIdx + 1, items.length - 1); updateHighlight(); }
-      if (e.key === 'ArrowUp') { e.preventDefault(); highlightedIdx = Math.max(highlightedIdx - 1, 0); updateHighlight(); }
-      if (e.key === 'Enter' && highlightedIdx >= 0) { e.preventDefault(); items[highlightedIdx]?.click(); hide(); }
+      highlightedIdx = keyboardNav(e, Array.from(items), highlightedIdx, () => hide());
     });
 
     // Close on scroll/window resize
@@ -658,7 +725,7 @@ function initMenubar() {
       trigger.addEventListener('click', (e) => {
         e.stopPropagation();
         const isOpen = menu.classList.contains('open');
-        bar.querySelectorAll('.menubar-menu').forEach(m => m.classList.remove('open'));
+        closeAll(['.menubar-menu.open']);
         triggers.forEach(t => t.setAttribute('aria-expanded', 'false'));
         if (!isOpen) {
           menu.classList.add('open');
@@ -669,7 +736,7 @@ function initMenubar() {
   });
 
   document.addEventListener('click', () => {
-    document.querySelectorAll('.menubar-menu').forEach(m => m.classList.remove('open'));
+    closeAll(['.menubar-menu.open']);
     document.querySelectorAll('.menubar-trigger').forEach(t => t.setAttribute('aria-expanded', 'false'));
   });
 }
@@ -697,19 +764,24 @@ function initScrollSpy() {
 /* ---- Global keyboard: Escape closes overlays ---- */
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    document.querySelectorAll('.alert-dialog-overlay.open').forEach(d => d.classList.remove('open'));
+    closeAll([
+      '.alert-dialog-overlay.open',
+      '.dropdown-menu.open',
+      '.dialog-overlay.open',
+      '.sheet-overlay.open',
+      '.sheet.open',
+      '.custom-select.open',
+      '.menubar-menu.open',
+      '.combobox.open'
+    ]);
     document.querySelectorAll('.dropdown-menu.open').forEach(d => {
-      d.classList.remove('open');
       const t = d.querySelector('.dropdown-menu-trigger');
       if (t) t.setAttribute('aria-expanded', 'false');
       d.querySelectorAll('.dropdown-menu-sub.open-sub').forEach(s => s.classList.remove('open-sub'));
     });
-    document.querySelectorAll('.dialog-overlay.open').forEach(d => d.classList.remove('open'));
-    document.querySelectorAll('.sheet-overlay.open').forEach(o => o.classList.remove('open'));
-    document.querySelectorAll('.sheet.open').forEach(s => s.classList.remove('open'));
+    document.querySelectorAll('.dropdown-menu-trigger').forEach(t => t.setAttribute('aria-expanded', 'false'));
+    document.querySelectorAll('.custom-select-trigger').forEach(t => t.setAttribute('aria-expanded', 'false'));
     document.querySelectorAll('.popover-content.show').forEach(p => p.classList.remove('show'));
-    document.querySelectorAll('.custom-select.open').forEach(s => s.classList.remove('open'));
-    document.querySelectorAll('.menubar-menu').forEach(m => m.classList.remove('open'));
     document.body.style.overflow = '';
   }
 });
@@ -726,6 +798,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initPopover();
   initHoverCard();
   initCustomSelect();
+  initCombobox();
   initToggle();
   initToastTriggers();
   initCalendar();

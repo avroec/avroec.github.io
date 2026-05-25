@@ -441,6 +441,97 @@ img, svg, video { display: block; max-width: 100%; }
 .custom-select-option .check-icon { display: none; width: 0.75rem; height: 0.75rem; margin-left: auto; }
 
 /* =====================================================
+   COMPONENT: Combobox
+   ===================================================== */
+.combobox {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.combobox-trigger {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.combobox-input {
+  flex: 1;
+  height: 2.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--input);
+  background: var(--background);
+  padding: 0 2.5rem 0 0.75rem;
+  font-size: 0.875rem;
+  color: var(--foreground);
+  transition: border-color 150ms, box-shadow 150ms;
+  outline: none;
+}
+.combobox-input::placeholder { color: var(--muted-foreground); }
+.combobox-input:focus { border-color: var(--ring); box-shadow: 0 0 0 1px var(--ring); }
+.combobox-chevron {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  color: var(--muted-foreground);
+  transition: transform 200ms, color 150ms;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+.combobox-chevron:hover { color: var(--foreground); }
+.combobox.open .combobox-chevron { transform: translateY(-50%) rotate(180deg); }
+.combobox.open .combobox-input { border-color: var(--ring); box-shadow: 0 0 0 1px var(--ring); }
+.combobox-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 0.25rem;
+  max-height: 240px;
+  overflow-y: auto;
+  display: none;
+}
+.combobox.open .combobox-menu { display: block; }
+.combobox-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: calc(var(--radius) * 0.5);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 150ms;
+}
+.combobox-option:hover,
+.combobox-option.highlighted { background: var(--accent); color: var(--accent-foreground); }
+.combobox-option[aria-selected="true"] { font-weight: 600; }
+.combobox-option[aria-selected="true"]::after {
+  content: "✓";
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--primary);
+}
+.combobox-empty {
+  padding: 0.75rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+/* =====================================================
    COMPONENT: Slider
    ===================================================== */
 .slider {
@@ -1258,7 +1349,7 @@ img, svg, video { display: block; max-width: 100%; }
   cursor: pointer;
   transition: background 150ms;
 }
-.command-item:hover, .command-item.selected { background: var(--accent); color: var(--accent-foreground); }
+.command-item:hover, .command-item.selected, .command-item.highlighted { background: var(--accent); color: var(--accent-foreground); }
 .command-item kbd { margin-left: auto; }
 .command-empty { padding: 2rem; text-align: center; font-size: 0.875rem; color: var(--muted-foreground); }
 
