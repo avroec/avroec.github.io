@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSmoothScroll();
   initSkillBars();
   initScrollIndicator();
+  initThemeToggle();
 });
 
 /* === Navbar Scroll Effect === */
@@ -181,4 +182,112 @@ function initScrollIndicator() {
       indicator.style.opacity = '1';
     }
   });
+}
+
+/* === Smooth Scroll for Nav Links === */
+function initSmoothScroll() {
+  const NAV_HEIGHT = 72;
+
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const targetId = link.getAttribute('href');
+      if (targetId === '#') return;
+
+      const target = document.querySelector(targetId);
+      if (!target) return;
+
+      e.preventDefault();
+
+      const targetTop = target.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = targetTop - NAV_HEIGHT - 16;
+
+      // Update URL hash so users can share section links
+      history.pushState(null, null, targetId);
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    });
+  });
+}
+
+/* === Marquee auto-clone for seamless loop === */
+function initMarquee() {
+  const wrap = document.querySelector('.marquee-wrap');
+  if (!wrap) return;
+
+  const track = wrap.querySelector('.marquee-track');
+  if (!track) return;
+
+  // Auto-clone if not already duplicated
+  if (wrap.querySelectorAll('.marquee-track').length < 2) {
+    const clone = track.cloneNode(true);
+    clone.setAttribute('aria-hidden', 'true');
+    wrap.appendChild(clone);
+  }
+}
+
+/* === Dark Mode Toggle === */
+function initThemeToggle() {
+  const toggle = document.getElementById('themeToggle');
+  if (!toggle) return;
+
+  // Detect saved preference or system preference
+  const savedTheme = localStorage.getItem('theme');
+  const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  function setTheme(theme) {
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      toggle.textContent = '☀️';
+      toggle.setAttribute('aria-label', 'Switch to light mode');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      toggle.textContent = '🌙';
+      toggle.setAttribute('aria-label', 'Switch to dark mode');
+    }
+  }
+
+  // Apply initial theme
+  if (savedTheme) {
+    setTheme(savedTheme);
+  } else if (systemDark) {
+    setTheme('dark');
+  }
+
+  // Toggle on click
+  toggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    localStorage.setItem('theme', next);
+  });
+
+  // Listen for system preference changes
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!localStorage.getItem('theme')) {
+      setTheme(e.matches ? 'dark' : 'light');
+    }
+  });
+}
+
+/* === Skill Bar Animation on Scroll === */
+function initSkillBars() {
+  const bars = document.querySelectorAll('.skill-bar-fill');
+  if (!bars.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const bar = entry.target;
+        const width = bar.getAttribute('data-width') || '0';
+        bar.style.width = width + '%';
+        bar.classList.add('animated');
+        observer.unobserve(bar);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  bars.forEach(bar => observer.observe(bar));
 }
