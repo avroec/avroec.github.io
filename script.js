@@ -1,4 +1,4 @@
-/* === Main JavaScript for MD Sumon Mia Replica === */
+/* === Main JavaScript for MD Sumon Mia Portfolio === */
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
@@ -6,13 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
   initServiceDropdown();
   initScrollAnimations();
   initCounterAnimation();
-  initServiceTabs();
-  initPricingTabs();
   initFAQ();
   initContactForm();
+  initFreeQuoteForm();
   initMarquee();
   initSmoothScroll();
   initSkillBars();
+  initScrollIndicator();
 });
 
 /* === Navbar Scroll Effect === */
@@ -107,100 +107,6 @@ function animateCounter(el) {
   requestAnimationFrame(update);
 }
 
-/* === Service Tabs === */
-function initServiceTabs() {
-  const tabs = document.querySelectorAll('.services-tab');
-  const grid = document.querySelector('.services-grid');
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-
-      const category = tab.dataset.tab;
-      const cards = grid.querySelectorAll('.service-card');
-
-      cards.forEach(card => {
-        if (category === 'all' || card.dataset.category === category) {
-          card.style.display = '';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-    });
-  });
-}
-
-/* === Pricing Platform Tabs === */
-function initPricingTabs() {
-  const tabs = document.querySelectorAll('.pricing-platform-tab');
-  const container = document.querySelector('.pricing-content');
-
-  if (!container || tabs.length === 0) return;
-
-  const platforms = {
-    wordpress: {
-      halfPrice: '$400', fullPrice: '$800',
-      halfDisc: '$360', fullDisc: '$720',
-      halfDesc: 'Perfect for startups — a clean, professional WordPress website ready to launch fast.',
-      fullDesc: 'The complete WordPress solution with SEO, e-commerce, and everything to grow online.',
-      name: 'WordPress'
-    },
-    shopify: {
-      halfPrice: '$400', fullPrice: '$800',
-      halfDisc: '$360', fullDisc: '$720',
-      halfDesc: 'Perfect for startups — a clean, professional Shopify website ready to launch fast.',
-      fullDesc: 'The complete Shopify solution with SEO, e-commerce, and everything to grow online.',
-      name: 'Shopify'
-    },
-    webflow: {
-      halfPrice: '$400', fullPrice: '$800',
-      halfDisc: '$360', fullDisc: '$720',
-      halfDesc: 'Perfect for startups — a clean, professional Webflow website ready to launch fast.',
-      fullDesc: 'The complete Webflow solution with SEO, e-commerce, and everything to grow online.',
-      name: 'Webflow'
-    },
-    framer: {
-      halfPrice: '$400', fullPrice: '$800',
-      halfDisc: '$360', fullDisc: '$720',
-      halfDesc: 'Perfect for startups — a clean, professional Framer website ready to launch fast.',
-      fullDesc: 'The complete Framer solution with SEO, e-commerce, and everything to grow online.',
-      name: 'Framer'
-    },
-    wix: {
-      halfPrice: '$400', fullPrice: '$800',
-      halfDisc: '$360', fullDisc: '$720',
-      halfDesc: 'Perfect for startups — a clean, professional Wix website ready to launch fast.',
-      fullDesc: 'The complete Wix solution with SEO, e-commerce, and everything to grow online.',
-      name: 'Wix'
-    }
-  };
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const platform = tab.dataset.platform;
-      const data = platforms[platform];
-      if (!data) return;
-
-      // Update pricing cards
-      container.querySelectorAll('.pricing-card').forEach(card => {
-        const type = card.dataset.pkg; // half or full
-        if (type === 'half') {
-          card.querySelector('.price').innerHTML = data.halfPrice;
-          card.querySelector('.discount').innerHTML = '🎉 10% OFF first order → ' + data.halfDisc;
-          card.querySelector('.pkg-desc').textContent = data.halfDesc;
-        } else if (type === 'full') {
-          card.querySelector('.price').innerHTML = data.fullPrice;
-          card.querySelector('.discount').innerHTML = '🎉 10% OFF first order → ' + data.fullDisc;
-          card.querySelector('.pkg-desc').textContent = data.fullDesc;
-        }
-      });
-    });
-  });
-}
-
 /* === FAQ Accordion === */
 function initFAQ() {
   document.querySelectorAll('.faq-question').forEach(btn => {
@@ -215,66 +121,64 @@ function initFAQ() {
   });
 }
 
-/* === Contact Form === */
-function initContactForm() {
-  const form = document.getElementById('contactForm');
+/* === Generic Form Handler === */
+function initGenericForm(formId, nameId, emailId, msgId, successId, errorId, btnText) {
+  const form = document.getElementById(formId);
   if (!form) return;
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const btn = form.querySelector('button[type="submit"]');
-    const successEl = document.getElementById('formSuccess');
-    const formInner = form.querySelector('.form-inner');
+    const successEl = document.getElementById(successId);
+    const errorEl = document.getElementById(errorId);
+    const formInner = form.closest('.form-inner, .free-quote-form-inner');
+    const name = document.getElementById(nameId);
+    const email = document.getElementById(emailId);
+    const message = document.getElementById(msgId);
 
-    // Simulate submission
+    if (!name.value.trim() || !email.value.trim() || !message.value.trim()) {
+      if (errorEl) {
+        errorEl.querySelector('p').textContent = '⚠️ Please fill in all required fields and try again.';
+        errorEl.classList.add('show');
+      }
+      return;
+    }
+
+    if (errorEl) errorEl.classList.remove('show');
+
     btn.disabled = true;
     btn.textContent = 'Sending...';
 
     setTimeout(() => {
       btn.disabled = false;
-      btn.textContent = 'Send Message';
+      btn.textContent = btnText;
       if (formInner) formInner.style.display = 'none';
       if (successEl) successEl.classList.add('show');
     }, 1500);
   });
 }
 
-/* === Skill Bar Animation === */
-function initSkillBars() {
-  const bars = document.querySelectorAll('.skill-bar-fill');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const bar = entry.target;
-        const width = bar.dataset.width;
-        bar.style.width = width + '%';
-        bar.classList.add('animated');
-        observer.unobserve(bar);
-      }
-    });
-  }, { threshold: 0.5 });
-
-  bars.forEach(bar => observer.observe(bar));
-}
-function initSmoothScroll() {
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-      const href = this.getAttribute('href');
-      if (href === '#') return;
-      const target = document.querySelector(href);
-      if (target) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth' });
-      }
-    });
-  });
+/* === Contact Form === */
+function initContactForm() {
+  initGenericForm('contactForm', 'name', 'email', 'message', 'formSuccess', 'formError', 'Send Message');
 }
 
-/* === Marquee Clone for infinite scroll === */
-function initMarquee() {
-  document.querySelectorAll('.marquee-track').forEach(track => {
-    const clone = track.cloneNode(true);
-    clone.setAttribute('aria-hidden', 'true');
-    track.parentElement.appendChild(clone);
+/* === Free Quote Form === */
+function initFreeQuoteForm() {
+  initGenericForm('freeQuoteForm', 'fq-name', 'fq-email', 'fq-message', 'freeQuoteSuccess', 'freeQuoteError', 'Send Request');
+}
+
+/* === Scroll Indicator Hide on Scroll === */
+function initScrollIndicator() {
+  const indicator = document.querySelector('.scroll-indicator');
+  if (!indicator) return;
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 100) {
+      indicator.style.opacity = '0';
+      indicator.style.transition = 'opacity 0.3s ease';
+    } else {
+      indicator.style.opacity = '1';
+    }
   });
 }
