@@ -40,31 +40,35 @@ function updateItemsHighlight(items, activeIdx) {
   items.forEach((item, i) => item.classList.toggle('highlighted', i === activeIdx));
 }
 
-/* ---- Dark Mode ---- */
+/* ---- Theme Switcher ---- */
 function initTheme() {
   const btn = document.getElementById('themeToggle');
   if (!btn) return;
 
+  const themes = ['light', 'dark', 'brutalist', 'terminal'];
+  const icons = { light: '🌙', dark: '☀️', brutalist: '🏗️', terminal: '💻' };
+  const nextThemeName = { light: 'dark', dark: 'brutalist', brutalist: 'terminal', terminal: 'light' };
+
   const saved = localStorage.getItem('theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const initial = saved || (prefersDark ? 'dark' : 'light');
 
   function setTheme(t) {
-    if (t === 'dark') {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      btn.textContent = '☀️';
-      btn.setAttribute('aria-label', 'Switch to light mode');
-    } else {
+    if (t === 'light') {
       document.documentElement.removeAttribute('data-theme');
-      btn.textContent = '🌙';
-      btn.setAttribute('aria-label', 'Switch to dark mode');
+    } else {
+      document.documentElement.setAttribute('data-theme', t);
     }
+    btn.textContent = icons[t] || '🎨';
+    btn.setAttribute('aria-label', `Switch to ${nextThemeName[t] || 'light'} theme`);
   }
 
-  setTheme(saved || (prefersDark ? 'dark' : 'light'));
+  setTheme(initial);
 
   btn.addEventListener('click', () => {
-    const isDark = document.documentElement.hasAttribute('data-theme');
-    const next = isDark ? 'light' : 'dark';
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    const idx = themes.indexOf(current);
+    const next = themes[(idx + 1) % themes.length];
     setTheme(next);
     localStorage.setItem('theme', next);
   });

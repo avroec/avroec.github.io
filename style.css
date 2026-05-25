@@ -59,6 +59,76 @@
   --ring: #d4d4d8;
 }
 
+/* ---- Brutalist Theme ---- */
+[data-theme="brutalist"] {
+  --background: #fffff0;
+  --foreground: #111111;
+  --card: #fffff0;
+  --card-foreground: #111111;
+  --popover: #fffff0;
+  --popover-foreground: #111111;
+  --primary: #ffdd00;
+  --primary-foreground: #111111;
+  --secondary: #111111;
+  --secondary-foreground: #ffdd00;
+  --muted: #f0f0d8;
+  --muted-foreground: #555555;
+  --accent: #ffdd00;
+  --accent-foreground: #111111;
+  --destructive: #ff2200;
+  --destructive-foreground: #ffffff;
+  --border: #111111;
+  --input: #111111;
+  --ring: #ffdd00;
+  --success: #00aa00;
+  --warning: #ff8800;
+  --info: #0000ff;
+  --shadow-sm: 4px 4px 0 0 #111111;
+  --shadow: 6px 6px 0 0 #111111;
+  --shadow-md: 8px 8px 0 0 #111111;
+  --shadow-lg: 10px 10px 0 0 #111111;
+  --shadow-xl: 12px 12px 0 0 #111111;
+  --shadow-inner: inset 4px 4px 0 0 #111111;
+}
+
+[data-theme="brutalist"] *,
+[data-theme="brutalist"] *::before,
+[data-theme="brutalist"] *::after {
+  border-width: 2px;
+}
+
+/* ---- Terminal Theme ---- */
+[data-theme="terminal"] {
+  --background: #0c0c0c;
+  --foreground: #00ff41;
+  --card: #0c0c0c;
+  --card-foreground: #00ff41;
+  --popover: #0c0c0c;
+  --popover-foreground: #00ff41;
+  --primary: #00ff41;
+  --primary-foreground: #0c0c0c;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #00ff41;
+  --muted: #1a1a1a;
+  --muted-foreground: #00cc33;
+  --accent: #1a1a1a;
+  --accent-foreground: #00ff41;
+  --destructive: #ff0044;
+  --destructive-foreground: #0c0c0c;
+  --border: #00ff41;
+  --input: #00ff41;
+  --ring: #00ff41;
+  --success: #00ff41;
+  --warning: #ffff00;
+  --info: #00aaff;
+  --shadow-sm: 0 0 4px rgba(0,255,65,0.3);
+  --shadow: 0 0 6px rgba(0,255,65,0.4);
+  --shadow-md: 0 0 8px rgba(0,255,65,0.5);
+  --shadow-lg: 0 0 12px rgba(0,255,65,0.5);
+  --shadow-xl: 0 0 16px rgba(0,255,65,0.6);
+  --shadow-inner: inset 0 0 4px rgba(0,255,65,0.2);
+}
+
 /* ---- Reset ---- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -66,7 +136,8 @@ body {
   font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   background: var(--background);
   color: var(--foreground);
-  line-height: 1.5;
+  line-height: 1.65;
+  letter-spacing: 0.01em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
