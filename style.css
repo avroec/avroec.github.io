@@ -97,6 +97,21 @@
   border-width: 2px;
 }
 
+[data-theme="brutalist"] svg,
+[data-theme="brutalist"] svg *,
+[data-theme="brutalist"] .btn-icon,
+[data-theme="brutalist"] .btn-icon-sm,
+[data-theme="brutalist"] .btn-icon-lg,
+[data-theme="brutalist"] .carousel-dot,
+[data-theme="brutalist"] .spinner,
+[data-theme="brutalist"] ::-webkit-scrollbar-thumb {
+  border-width: 1px;
+}
+
+[data-theme="brutalist"] .btn-link {
+  border-width: 0;
+}
+
 /* ---- Terminal Theme ---- */
 [data-theme="terminal"] {
   --background: #0c0c0c;
@@ -140,6 +155,25 @@ body {
   letter-spacing: 0.01em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- Typography scale (optimized for IBM Plex Mono) ---- */
+h1, h2, h3, h4, h5, h6 { font-weight: 700; letter-spacing: -0.01em; }
+h1 { font-size: 1.5rem; line-height: 1.3; }
+h2 { font-size: 1.25rem; line-height: 1.35; }
+h3 { font-size: 1.125rem; line-height: 1.4; }
+h4 { font-size: 1rem; line-height: 1.45; }
+
+.card-title, .dialog-title, .sheet-title, .alert-dialog-title { font-weight: 700; font-size: 1.125rem; letter-spacing: 0; }
+.demo-section-title { font-weight: 700; letter-spacing: -0.02em; }
+.badge, .kbd, .btn { font-weight: 500; letter-spacing: 0.02em; }
+.btn-sm, .input-sm { font-size: 0.8rem; }
+
+/* ---- Theme transition ---- */
+*,
+*::before,
+*::after {
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
 }
 input, button, textarea, select { font: inherit; color: inherit; }
 button { cursor: pointer; background: none; border: none; }
